@@ -23,11 +23,13 @@
             <button @click="next" class="iconfont">&#xe651;</button>
             <button class="iconfont">&#xe727;</button>
           </div>
-          <div class="time"><i ref="T" :style="timeStyle"></i></div>
+          <div class="time" @click="control">
+            <i ref="T" :style="timeStyle"></i>
+          </div>
         </div>
         <div class="list">
           <!-- 歌单 -->
-          <span class="iconfont">&#xe636;</span>
+          <span class="iconfont" @click="control">&#xe636;</span>
         </div>
       </div>
     </div>
@@ -42,7 +44,7 @@ export default {
     return {
       musicName: "",
       author: "",
-      index: 0,
+      index: undefined,
       timeStyle: {
         left: 0,
       },
@@ -64,14 +66,16 @@ export default {
   },
   methods: {
     play(e) {
-      let audio = this.$refs.audio;
-      if (audio.src != "") {
-        if (audio.paused) {
-          audio.play();
-          e.target.innerHTML = "&#xea81;";
-        } else {
-          audio.pause();
-          e.target.innerHTML = "&#xe650;";
+      if (this.musicName) {
+        let audio = this.$refs.audio;
+        if (audio.src != "") {
+          if (audio.paused) {
+            audio.play();
+            e.target.innerHTML = "&#xea81;";
+          } else {
+            audio.pause();
+            e.target.innerHTML = "&#xe650;";
+          }
         }
       }
     },
@@ -98,12 +102,14 @@ export default {
     },
     // 下一首
     next() {
-      if (this.index >= 0) {
-        let id = this.musicList[this.index + 1]["id"];
-        this.$store.dispatch("SearchMusic/SearchMusic", id);
-        this.musicName = this.musicList[this.index + 1].name;
-        this.author = this.musicList[this.index + 1].artists[0].name;
-        this.index += 1;
+      if (this.$refs.audio.src != "") {
+        if (this.index >= 0) {
+          let id = this.musicList[this.index + 1]["id"];
+          this.$store.dispatch("SearchMusic/SearchMusic", id);
+          this.musicName = this.musicList[this.index + 1].name;
+          this.author = this.musicList[this.index + 1].artists[0].name;
+          this.index += 1;
+        }
       }
     },
     time() {
@@ -111,6 +117,14 @@ export default {
         let time = this.$refs.audio.currentTime; //获取audio当前时间
         let sumTime = this.$refs.audio.duration; //获取audio总时间
         this.timeStyle.left = ((time / sumTime) * 100).toFixed(3) + "%";
+      }
+    },
+    control(e) {
+      if (this.musicName) {
+        let x = e.clientX - e.target.offsetLeft - 114;
+        let allX = 400;
+        let allTime = this.$refs.audio.duration;
+        this.$refs.audio.currentTime = (x / allX) * allTime;
       }
     },
   },
@@ -207,6 +221,7 @@ export default {
             font-size: 5px;
             width: 10px;
             height: 10px;
+            cursor: pointer;
             border-radius: 50%;
             // transition: all 1s;
             background-color: @bc;
