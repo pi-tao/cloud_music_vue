@@ -11,15 +11,17 @@
         </div>
         <div class="play">
           <div class="top">
-            <button>删除</button>
-            <button @click="last">《</button>
-            <button @click="play">暂停</button>
-            <button @click="next">》</button>
-            <button>词</button>
+            <button class="iconfont">&#xe639;</button>
+            <button @click="last" class="iconfont">&#xe650;</button>
+            <button @click="play" class="iconfont">&#xea81;</button>
+            <button @click="next" class="iconfont">&#xe651;</button>
+            <button class="iconfont">&#xe727;</button>
           </div>
           <div class="time"></div>
         </div>
-        <div class="list">列表</div>
+        <div class="list">
+          <span class="iconfont">&#xe636;</span>
+        </div>
       </div>
     </div>
   </footer>
@@ -56,10 +58,10 @@ export default {
       if (audio.src != "") {
         if (audio.paused) {
           audio.play();
-          e.target.innerText = "暂停";
+          e.target.innerHTML = "&#xea81;";
         } else {
           audio.pause();
-          e.target.innerText = "播放";
+          e.target.innerHTML = "&#xe650;";
         }
       }
     },
@@ -104,6 +106,23 @@ export default {
 @bgc: #f5f5f6;
 @border_c: #e0e0e1;
 @grey: #9f9f9f;
+@font-face {
+  font-family: "iconfont"; /* Project id 3231729 */
+  src: url("//at.alicdn.com/t/font_3231729_3znze2k597i.woff2?t=1649921927670")
+      format("woff2"),
+    url("//at.alicdn.com/t/font_3231729_3znze2k597i.woff?t=1649921927670")
+      format("woff"),
+    url("//at.alicdn.com/t/font_3231729_3znze2k597i.ttf?t=1649921927670")
+      format("truetype");
+}
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+}
 // 底部
 #footer {
   .wrap {
@@ -144,15 +163,24 @@ export default {
           button {
             margin: 0 15px;
             border: 0px;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            border-radius: 15px;
             background-color: white;
             &:hover {
-              background-color: @bgc;
+              background-color: @border_c;
             }
           }
         }
       }
       .list {
         display: inline-block;
+        line-height: 60px;
+        .iconfont {
+          cursor: pointer;
+          font-size: 25px;
+        }
       }
     }
   }
