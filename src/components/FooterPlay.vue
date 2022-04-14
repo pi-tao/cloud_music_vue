@@ -1,7 +1,13 @@
 <template>
   <!-- 底部 -->
   <footer id="footer">
-    <audio :src="musicUrl" autoplay ref="audio" @ended="loopPlay"></audio>
+    <audio
+      :src="musicUrl"
+      autoplay
+      ref="audio"
+      @ended="loopPlay"
+      @timeupdate="time"
+    ></audio>
     <div class="wrap">
       <div class="content">
         <img src="@/assets/musicImg.png" alt="" />
@@ -17,9 +23,10 @@
             <button @click="next" class="iconfont">&#xe651;</button>
             <button class="iconfont">&#xe727;</button>
           </div>
-          <div class="time"></div>
+          <div class="time"><i ref="T" :style="timeStyle"></i></div>
         </div>
         <div class="list">
+          <!-- 歌单 -->
           <span class="iconfont">&#xe636;</span>
         </div>
       </div>
@@ -36,6 +43,9 @@ export default {
       musicName: "",
       author: "",
       index: 0,
+      timeStyle: {
+        left: 0,
+      },
     };
   },
   mounted() {
@@ -96,6 +106,13 @@ export default {
         this.index += 1;
       }
     },
+    time() {
+      if (this.$refs.audio.currentTime) {
+        let time = this.$refs.audio.currentTime; //获取audio当前时间
+        let sumTime = this.$refs.audio.duration; //获取audio总时间
+        this.timeStyle.left = ((time / sumTime) * 100).toFixed(3) + "%";
+      }
+    },
   },
 };
 </script>
@@ -127,6 +144,7 @@ export default {
 #footer {
   .wrap {
     .content {
+      z-index: 101;
       position: fixed;
       width: 1200px;
       bottom: 0px;
@@ -171,6 +189,27 @@ export default {
             &:hover {
               background-color: @border_c;
             }
+          }
+        }
+        .time {
+          text-align: left;
+          display: inline-block;
+          position: relative;
+          width: 400px;
+          height: 5px;
+          background-color: @grey;
+          border-radius: 3px;
+          border: 2px solid @grey;
+          i {
+            position: absolute;
+            top: -5px;
+            left: 0;
+            font-size: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            // transition: all 1s;
+            background-color: @bc;
           }
         }
       }
