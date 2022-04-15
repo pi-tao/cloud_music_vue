@@ -227,6 +227,8 @@ export default {
       .swiper-slide {
         text-align: center;
         font-size: 18px;
+        width: 336px;
+        height: 182px;
         background: #fff;
 
         /* Center slide text vertically */
@@ -242,7 +244,7 @@ export default {
         -ms-flex-align: center;
         -webkit-align-items: center;
         align-items: center;
-        transition: 300ms;
+        transition: 500ms;
         transform: scale(0.8);
       }
       .swiper-slide-active,
