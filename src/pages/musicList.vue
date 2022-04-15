@@ -68,6 +68,7 @@ export default {
           e.target.dataset.musicauthor,
           e.target.dataset.number
         );
+        this.$store.dispatch("MusicWordsStore/getMusicWords", id); //获取歌词
       }
     },
   },

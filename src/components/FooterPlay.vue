@@ -21,7 +21,7 @@
             <button @click="last" class="iconfont">&#xe650;</button>
             <button @click="play" class="iconfont">&#xea81;</button>
             <button @click="next" class="iconfont">&#xe651;</button>
-            <button class="iconfont">&#xe727;</button>
+            <button class="iconfont" @click="toMusicWords">&#xe727;</button>
           </div>
           <div class="time" @click="control">
             <i ref="T" :style="timeStyle"></i>
@@ -59,6 +59,7 @@ export default {
   },
   updated() {
     this.$bus.$emit("author", this.author);
+    this.$bus.$emit("musicWordsName", this.musicName); //发送音乐名
   },
   computed: {
     ...mapState("SearchMusic", ["musicUrl"]),
@@ -112,6 +113,7 @@ export default {
         }
       }
     },
+    // 获取播放进度
     time() {
       if (this.$refs.audio.currentTime) {
         let time = this.$refs.audio.currentTime; //获取audio当前时间
@@ -119,13 +121,17 @@ export default {
         this.timeStyle.left = ((time / sumTime) * 100).toFixed(3) + "%";
       }
     },
+    // 控制播放进度
     control(e) {
       if (this.musicName) {
-        let x = e.clientX - e.target.offsetLeft - 114;
-        let allX = 400;
+        let x = (e.offsetX / e.target.offsetWidth).toFixed(2); //offsetX获取鼠标在元素内点击的x坐标，offsetWidth获取元素宽度
         let allTime = this.$refs.audio.duration;
-        this.$refs.audio.currentTime = (x / allX) * allTime;
+        this.$refs.audio.currentTime = x * allTime;
       }
+    },
+    // 查看歌词页面
+    toMusicWords() {
+      this.$router.push({ name: "MusicWords" });
     },
   },
 };

@@ -17,3 +17,12 @@ export const reqGetMusicURL = (params) =>
       id: params,
     },
   });
+
+export const reqGetMusicWords = (params) =>
+  requests({
+    url: "/lyric",
+    methods: "get",
+    params: {
+      id: params,
+    },
+  });

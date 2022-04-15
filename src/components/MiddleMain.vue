@@ -5,7 +5,7 @@
       <nav class="leftNav">
         <ul>
           <li tabindex="1" @click="toFindMusic">发现音乐</li>
-          <li tabindex="1">播客</li>
+          <li tabindex="1" @click="toMusicWords">歌词</li>
           <li tabindex="1">视频</li>
           <li tabindex="1">关注</li>
           <li tabindex="1">直播</li>
@@ -42,6 +42,11 @@ export default {
     toFindMusic() {
       this.$router.push({
         name: "FindMusic",
+      });
+    },
+    toMusicWords() {
+      this.$router.push({
+        name: "MusicWords",
       });
     },
   },
