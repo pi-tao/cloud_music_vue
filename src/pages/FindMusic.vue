@@ -151,7 +151,7 @@ export default {
   mounted() {
     new Swiper(".swiper-container", {
       slidesPerView: 3,
-      spaceBetween: -1,
+      spaceBetween: 1,
       autoplay: true,
       centeredSlides: true,
       loop: true,
