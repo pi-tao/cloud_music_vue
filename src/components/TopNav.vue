@@ -19,7 +19,8 @@
       <div class="user">
         <img src="@/assets/head.png" alt="" class="head" />
         <span class="userName">
-          <i>用户名 v</i>
+          <i v-if="!cookie" @click="login">登录 v</i>
+          <i v-if="cookie">{{ username }}</i>
           <!-- 用户信息 -->
           <div class="info">
             <div class="top">
@@ -85,6 +86,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "TopNav",
   data() {
@@ -102,6 +104,12 @@ export default {
         });
       }
     },
+    login() {
+      this.$router.push({ name: "LoginPage" });
+    },
+  },
+  computed: {
+    ...mapState("UserStore", ["username", "cookie"]),
   },
 };
 </script>
@@ -176,6 +184,10 @@ export default {
           display: block;
         }
         i {
+          cursor: pointer;
+          font-size: 18px;
+          font-weight: 700;
+          margin-left: 10px;
           padding: 22px 0;
         }
         // 用户信息模块

@@ -29,7 +29,9 @@
         </ul>
       </nav>
       <main class="main">
-        <router-view></router-view>
+        <keep-alive include="LoginPage">
+          <router-view></router-view>
+        </keep-alive>
       </main>
     </div>
   </main>

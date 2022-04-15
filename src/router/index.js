@@ -12,6 +12,8 @@ VueRouter.prototype.replace = function replace(location) {
 import FindMusic from "@/pages/FindMusic";
 import musicList from "@/pages/musicList";
 import MusicWords from "@/pages/MusicWords";
+import LoginPage from "@/pages/LoginPage";
+import codeLogin from "@/pages/codeLogin";
 // 注册路由
 const router = new VueRouter({
   routes: [
@@ -33,6 +35,16 @@ const router = new VueRouter({
       name: "MusicWords",
       path: "/MusicWords",
       component: MusicWords,
+    },
+    {
+      name: "LoginPage",
+      path: "/LoginPage",
+      component: LoginPage,
+    },
+    {
+      name: "codeLogin",
+      path: "/codeLogin",
+      component: codeLogin,
     },
   ],
 });

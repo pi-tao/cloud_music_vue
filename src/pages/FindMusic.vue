@@ -17,17 +17,12 @@
       <div class="lbt">
         <div class="swiper-container">
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img src="@/assets/1.jpg" alt="" />
-            </div>
-            <div class="swiper-slide">
-              <img src="@/assets/2.jpg" alt="" />
-            </div>
-            <div class="swiper-slide">
-              <img src="@/assets/3.jpg" alt="" />
-            </div>
-            <div class="swiper-slide">
-              <img src="@/assets/4.jpg" alt="" />
+            <div
+              class="swiper-slide"
+              v-for="banner in bannerList"
+              :key="banner.encodeId"
+            >
+              <img :src="banner.imageUrl" alt="" />
             </div>
           </div>
           <!-- 如果需要分页器 -->
@@ -38,35 +33,11 @@
       <div class="tuijian">
         <h3>推荐歌单 ></h3>
         <div class="gedan">
-          <ul>
-            <li>
+          <ul @click="getGedanInfo">
+            <li v-for="gedan in gedanInfo" :key="gedan.id">
               <div class="gedan_detail">
-                <img src="@/assets/1.jpg" alt="" />
-                <h5>每日推荐</h5>
-              </div>
-            </li>
-            <li>
-              <div class="gedan_detail">
-                <img src="@/assets/1.jpg" alt="" />
-                <h5>每日推荐</h5>
-              </div>
-            </li>
-            <li>
-              <div class="gedan_detail">
-                <img src="@/assets/1.jpg" alt="" />
-                <h5>每日推荐</h5>
-              </div>
-            </li>
-            <li>
-              <div class="gedan_detail">
-                <img src="@/assets/1.jpg" alt="" />
-                <h5>每日推荐</h5>
-              </div>
-            </li>
-            <li>
-              <div class="gedan_detail">
-                <img src="@/assets/1.jpg" alt="" />
-                <h5>每日推荐</h5>
+                <img :src="gedan.coverImgUrl" alt="" :data-gedanid="gedan.id" />
+                <h5>{{ gedan.description }}</h5>
               </div>
             </li>
           </ul>
@@ -171,14 +142,16 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Swiper from "swiper";
 import "swiper/swiper-bundle.min.css";
+
 export default {
   name: "FindMusic",
   mounted() {
     new Swiper(".swiper-container", {
       slidesPerView: 3,
-      // spaceBetween: -1,
+      spaceBetween: -1,
       autoplay: true,
       centeredSlides: true,
       loop: true,
@@ -187,6 +160,20 @@ export default {
         clickable: true,
       },
     });
+    this.$store.dispatch("FindMusicStore/getBanner"); //获取banner
+    this.$store.dispatch("FindMusicStore/getGedan"); //获取歌单
+  },
+  computed: {
+    ...mapState("FindMusicStore", ["bannerList", "gedanInfo"]),
+  },
+  methods: {
+    getGedanInfo(e) {
+      if (e.target.nodeName == "IMG") {
+        let gedanId = e.target.dataset.gedanid;
+        // console.log(gedanId);
+        this.$store.dispatch("FindMusicStore/getGedanInfo", gedanId);
+      }
+    },
   },
 };
 </script>
@@ -294,10 +281,13 @@ export default {
               img {
                 width: 100%;
                 height: 167px;
+                cursor: pointer;
                 border-radius: 5px 5px 0px 0px;
               }
               h5 {
+                margin: 0 5px;
                 font-weight: 400;
+                font-size: 12px;
                 line-height: 20px;
               }
             }
