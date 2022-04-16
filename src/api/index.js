@@ -93,10 +93,11 @@ export const reqGetGedan = () =>
     },
   });
 // 获取歌单详细信息
-export const reqGetGedanInfo = (params) =>
+export const reqGetGedanInfo = ({ id, cookie }) =>
   requests({
     url: "/playlist/detail",
     params: {
-      id: params,
+      id: id,
+      cookie: cookie,
     },
   });

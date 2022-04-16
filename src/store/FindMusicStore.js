@@ -9,6 +9,7 @@ export default {
     bannerList: [],
     gedanInfo: [], //歌单信息
     gedanListInfo: {},
+    gedanMusicName: "", //当前音乐名，
   },
   actions: {
     // 获取音乐id
@@ -35,7 +36,7 @@ export default {
     // 获取歌单详细信息
     async getGedanInfo({ commit }, data) {
       let result = await reqGetGedanInfo(data);
-      console.log(result);
+      // console.log(result);
       if (result.code == 200) {
         commit("GETGEDANINFO", result.playlist);
       }
@@ -57,6 +58,39 @@ export default {
     GETGEDANINFO(state, data) {
       state.gedanListInfo = data;
     },
+    // 存储当前音乐名
+    MUSICNAME(state, data) {
+      state.gedanMusicName = data;
+    },
   },
-  getters: {},
+  getters: {
+    // 歌单名称
+    gedanName({ gedanListInfo }) {
+      return gedanListInfo.name || undefined;
+    },
+    // 歌单img
+    gedanImg({ gedanListInfo }) {
+      return gedanListInfo.coverImgUrl || undefined;
+    },
+    // 歌单简介
+    gedanJianjie({ gedanListInfo }) {
+      return gedanListInfo.description || undefined;
+    },
+    // 歌单创建者
+    gedanCreatorName({ gedanListInfo }) {
+      return gedanListInfo.creator.nickname || undefined;
+    },
+    // 歌单作者头像
+    gedanCreatorImg({ gedanListInfo }) {
+      return gedanListInfo.creator.avatarUrl || "";
+    },
+    // 歌单标签
+    gedanBiaoQian({ gedanListInfo }) {
+      return gedanListInfo.tags || undefined;
+    },
+    // 歌单歌曲
+    gedanMusicList({ gedanListInfo }) {
+      return gedanListInfo.tracks || undefined;
+    },
+  },
 };

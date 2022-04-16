@@ -60,10 +60,11 @@ export default {
   updated() {
     this.$bus.$emit("author", this.author);
     this.$bus.$emit("musicWordsName", this.musicName); //发送音乐名
+    this.musicName = this.gedanMusicName;
   },
   computed: {
     ...mapState("SearchMusic", ["musicUrl"]),
-    ...mapState("FindMusicStore", ["musicList"]),
+    ...mapState("FindMusicStore", ["musicList", "gedanMusicName"]),
   },
   methods: {
     play(e) {

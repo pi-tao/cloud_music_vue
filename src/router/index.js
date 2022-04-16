@@ -14,6 +14,7 @@ import musicList from "@/pages/musicList";
 import MusicWords from "@/pages/MusicWords";
 import LoginPage from "@/pages/LoginPage";
 import codeLogin from "@/pages/codeLogin";
+import gedanInfo from "@/pages/gedanInfo";
 // 注册路由
 const router = new VueRouter({
   routes: [
@@ -45,6 +46,11 @@ const router = new VueRouter({
       name: "codeLogin",
       path: "/codeLogin",
       component: codeLogin,
+    },
+    {
+      name: "gedanInfo",
+      path: "/gedanInfo",
+      component: gedanInfo,
     },
   ],
 });

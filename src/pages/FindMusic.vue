@@ -160,18 +160,26 @@ export default {
         clickable: true,
       },
     });
-    this.$store.dispatch("FindMusicStore/getBanner"); //获取banner
-    this.$store.dispatch("FindMusicStore/getGedan"); //获取歌单
+    if (this.cookie) {
+      this.$store.dispatch("FindMusicStore/getBanner"); //获取banner
+      this.$store.dispatch("FindMusicStore/getGedan"); //获取歌单
+    }
   },
   computed: {
-    ...mapState("FindMusicStore", ["bannerList", "gedanInfo"]),
+    ...mapState("FindMusicStore", ["bannerList", "gedanInfo", "cookie"]),
   },
   methods: {
     getGedanInfo(e) {
       if (e.target.nodeName == "IMG") {
         let gedanId = e.target.dataset.gedanid;
+        let cookie = this.cookie;
+        let params = {
+          id: gedanId,
+          cookie: cookie,
+        };
         // console.log(gedanId);
-        this.$store.dispatch("FindMusicStore/getGedanInfo", gedanId);
+        this.$store.dispatch("FindMusicStore/getGedanInfo", params);
+        this.$router.push({ name: "gedanInfo" });
       }
     },
   },
