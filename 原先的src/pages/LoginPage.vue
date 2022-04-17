@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="box">
+    <div class="box" v-if="!isLogin">
       <div class="ewm" @keyup="getX">
         <img src="@/assets/ewm.png" alt="二维码" @click="toqrLogin" /><img
           src="@/assets/sm.png"
@@ -30,6 +30,7 @@
       </div>
       <input type="checkbox" class="allow" /><span>同意隐私政策</span>
     </div>
+    <h1 v-if="isLogin">您已经成功登录！</h1>
   </div>
 </template>
 
@@ -40,6 +41,7 @@ export default {
     return {
       phone: null,
       password: "",
+      isLogin: false,
     };
   },
   methods: {
@@ -52,6 +54,11 @@ export default {
     toqrLogin() {
       this.$router.push({ name: "codeLogin" });
     },
+  },
+  mounted() {
+    if (localStorage.getItem("userInfo")) {
+      this.isLogin = true;
+    }
   },
 };
 </script>
@@ -67,6 +74,9 @@ export default {
   margin: 50px auto;
   border: 1px solid gray;
   background-color: white;
+  h1 {
+    text-align: center;
+  }
   .box {
     position: relative;
     .ewm {

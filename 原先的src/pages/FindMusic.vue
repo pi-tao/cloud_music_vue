@@ -19,8 +19,8 @@
           <div class="swiper-wrapper">
             <div
               class="swiper-slide"
-              v-for="banner in bannerList"
-              :key="banner.encodeId"
+              v-for="(banner, index) in bannerList"
+              :key="index"
             >
               <img :src="banner.imageUrl" alt="" />
             </div>
@@ -160,25 +160,18 @@ export default {
         clickable: true,
       },
     });
-    if (this.cookie) {
-      this.$store.dispatch("FindMusicStore/getBanner"); //获取banner
-      this.$store.dispatch("FindMusicStore/getGedan"); //获取歌单
-    }
+    this.$store.dispatch("FindMusicStore/getBanner"); //获取banner
+    this.$store.dispatch("FindMusicStore/getGedan"); //获取歌单
   },
   computed: {
-    ...mapState("FindMusicStore", ["bannerList", "gedanInfo", "cookie"]),
+    ...mapState("FindMusicStore", ["bannerList", "gedanInfo"]),
   },
   methods: {
     getGedanInfo(e) {
       if (e.target.nodeName == "IMG") {
         let gedanId = e.target.dataset.gedanid;
-        let cookie = this.cookie;
-        let params = {
-          id: gedanId,
-          cookie: cookie,
-        };
         // console.log(gedanId);
-        this.$store.dispatch("FindMusicStore/getGedanInfo", params);
+        this.$store.dispatch("FindMusicStore/getGedanInfo", gedanId);
         this.$router.push({ name: "gedanInfo" });
       }
     },

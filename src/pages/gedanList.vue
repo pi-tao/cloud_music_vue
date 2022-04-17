@@ -1,11 +1,11 @@
 <template>
   <div class="gedanlist">
-    <div class="top">
+    <div class="top" v-if="gedanImg">
       <img :src="gedanImg" alt="" />
       <div class="info">
         <h4>{{ gedanName }}</h4>
         <h6>
-          <img :src="gedanCreatorImg" /><span>{{ gedanCreatorName }}</span
+          <img :src="gedanAuthorImg" /><span> {{ gedanAuthorName }} </span
           ><i>创建时间</i>
         </h6>
         <ul class="btn">
@@ -16,20 +16,32 @@
         </ul>
         <div class="b">
           <ul>
-            <li>标签:<span>喜欢你</span></li>
             <li>
-              歌曲数量:<span>{{ gedanMusicList.length }}</span>
+              标签:<span v-for="(tag, index) in gedanTags" :key="index"
+                >{{ tag }}
+              </span>
             </li>
             <li>
-              简介:<span class="jianjie">{{ gedanJianjie }}</span>
+              歌曲数量:<span> {{ gedanMusicList.length }} </span>
+            </li>
+            <li>
+              <span class="jianjie"
+                >简介: &nbsp;&nbsp;{{ gedanDescrption }}
+              </span>
             </li>
           </ul>
         </div>
       </div>
-      <ul class="musicList" @click="getMusic">
+      <ul class="musicList" @click="senMusicInfo">
         <li v-for="(music, index) in gedanMusicList" :key="music.id">
-          <i> {{ index }} </i><em :data-musicId="music.id">{{ music.name }} </em
-          ><span>{{ music.name }}</span>
+          <i> {{ index }} </i
+          ><em
+            :data-index="index"
+            :data-musicname="music.name"
+            :data-musicid="music.id"
+            :data-musicauthor="music.ar[0].name"
+            >{{ music.name }} </em
+          ><span>{{ music.ar[0].name }}</span>
         </li>
       </ul>
     </div>
@@ -39,25 +51,34 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
-  name: "gedanInfo",
+  name: "gedanList",
   computed: {
-    ...mapGetters("FindMusicStore", [
-      "gedanName",
-      "gedanImg",
-      "gedanJianjie",
-      "gedanCreatorName",
-      "gedanCreatorImg",
-      "gedanBiaoQian",
+    ...mapGetters("findMusicStore", [
       "gedanMusicList",
+      "gedanTotal",
+      "gedanImg",
+      "gedanDescrption",
+      "gedanName",
+      "gedanAuthorImg",
+      "gedanAuthorName",
+      "gedanAuthorSignature",
+      "gedanPlayCount",
+      "gedanShareCount",
+      "gedanTags",
     ]),
   },
   methods: {
-    getMusic(e) {
+    senMusicInfo(e) {
       if (e.target.nodeName == "EM") {
-        let id = e.target.dataset.musicid;
-        let name = e.target.innerText;
-        this.$store.dispatch("SearchMusic/SearchMusic", id);
-        this.$store.commit("FindMusicStore/MUSICNAME", name);
+        let musicInfo = {
+          index: e.target.dataset.index,
+          musicname: e.target.dataset.musicname,
+          musicid: e.target.dataset.musicid,
+          musicauthor: e.target.dataset.musicauthor,
+        };
+        // console.log(musicInfo);
+        this.$store.dispatch("musicStore/getMusic", musicInfo);
+        this.$store.commit("musicStore/GEDANLIST", this.gedanMusicList);
       }
     },
   },

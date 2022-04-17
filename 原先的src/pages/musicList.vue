@@ -1,0 +1,200 @@
+<template>
+  <div class="musicList" style="display: block">
+    <h2>
+      搜索 <span>{{ musicName }}</span>
+    </h2>
+    <h6>你可能感兴趣</h6>
+    <div class="info">
+      <img src="@/assets/head.png" alt="" />
+      <div class="cont">
+        <h5>歌手:{{ author }}</h5>
+        <h6>粉丝：5000万，<span>歌曲：345</span></h6>
+      </div>
+    </div>
+    <ul>
+      <li tabindex="1">单曲</li>
+      <li tabindex="1">歌手</li>
+      <li tabindex="1">专辑</li>
+      <li tabindex="1">视频</li>
+      <li tabindex="1">歌单</li>
+      <span>共找到300首歌</span>
+    </ul>
+    <div class="music">
+      <div class="btn">
+        <button class="a">播放全部</button><button class="b">下载全部</button>
+      </div>
+      <!-- 歌曲列表 -->
+      <ul class="musicList" @click="playMusic">
+        <li v-for="(list, index) in musicList" :key="index">
+          <i>{{ index }}</i
+          ><em
+            :data-musicId="list.id"
+            :data-musicAuthor="list.artists[0].name"
+            :data-number="index"
+            >{{ list.name }}</em
+          ><span>{{ list.artists[0].name }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+<script>
+import { mapState } from "vuex";
+export default {
+  name: "musicList",
+  data() {
+    return {
+      musicName: "",
+      author: "",
+    };
+  },
+  mounted() {
+    this.$bus.$on("musicName", (data) => {
+      this.musicName = data;
+    });
+    this.$bus.$on("author", (data) => {
+      this.author = data;
+    });
+  },
+  methods: {
+    playMusic(e) {
+      if (e.target.nodeName == "EM") {
+        let id = e.target.dataset.musicid;
+        this.$store.dispatch("SearchMusic/SearchMusic", id);
+        this.$bus.$emit(
+          "musicInfo",
+          e.target.innerText,
+          e.target.dataset.musicauthor,
+          e.target.dataset.number
+        );
+        this.$store.dispatch("MusicWordsStore/getMusicWords", id); //获取歌词
+      }
+    },
+  },
+  computed: {
+    ...mapState("FindMusicStore", ["musicList"]),
+  },
+};
+</script>
+
+<style lang='less' scoped>
+li {
+  list-style: none;
+}
+@mc: #ec4141;
+@bc: #bf3b30;
+@bgc: #f5f5f6;
+@border_c: #e0e0e1;
+@grey: #9f9f9f;
+.musicList {
+  text-indent: 1em;
+  h2 {
+    margin: 10px 0;
+  }
+  h6 {
+    font-weight: 400;
+    margin-top: 20px;
+  }
+  .info {
+    margin-left: 18px;
+    width: 300px;
+    height: 65px;
+    &:hover {
+      background-color: @border_c;
+    }
+    div {
+      display: inline-block;
+    }
+    img {
+      width: 50px;
+      height: 50px;
+      margin-top: 8px;
+      margin-left: -5px;
+      vertical-align: sub;
+      border-radius: 50%;
+    }
+    .cont {
+      h6 {
+        margin-top: 5px;
+      }
+    }
+  }
+  ul {
+    width: 1000px;
+    li {
+      text-indent: 0;
+      font-size: 12px;
+      text-align: center;
+      display: inline-block;
+      padding: 5px 10px;
+      transition: all 0.2s;
+      &:focus {
+        font-size: 15px;
+        border-bottom: 2px solid @mc;
+      }
+    }
+    span {
+      float: right;
+      margin-right: 20px;
+      color: rgb(114, 114, 114);
+      font-size: 3px;
+    }
+  }
+  .music {
+    .btn {
+      line-height: 60px;
+      height: 60px;
+      border-bottom: 1px solid @border_c;
+      button {
+        border: 0px;
+        width: 140px;
+        height: 30px;
+        border-radius: 15px;
+        margin: 5px;
+      }
+      .a {
+        color: white;
+        background-color: @mc;
+        &:hover {
+          background-color: @bc;
+        }
+      }
+      .b {
+        background-color: @bgc;
+        border: 1px solid @grey;
+        &:hover {
+          background-color: @border_c;
+        }
+      }
+    }
+    .musicList {
+      text-indent: 0;
+      width: 1000px;
+      li {
+        text-align: left;
+        height: 30px;
+        padding-left: 20px;
+        width: 100%;
+        &:hover {
+          background-color: @border_c;
+        }
+        div {
+          display: inline-block;
+        }
+        i {
+          width: 30px;
+          display: inline-block;
+        }
+        em {
+          display: inline-block;
+          width: 320px;
+          cursor: pointer;
+        }
+        span {
+          float: none;
+        }
+      }
+    }
+  }
+}
+</style>

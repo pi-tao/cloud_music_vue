@@ -5,7 +5,7 @@
       <nav class="leftNav">
         <ul>
           <li tabindex="1" @click="toFindMusic">发现音乐</li>
-          <li tabindex="1" @click="toSearchMusic">搜索</li>
+          <li tabindex="1" @click="toMusicWords">歌词</li>
           <li tabindex="1">视频</li>
           <li tabindex="1">关注</li>
           <li tabindex="1">直播</li>
@@ -20,31 +20,50 @@
           <li tabindex="1">我的收藏</li>
         </ul>
         <h3>我的歌单</h3>
-        <ul>
-          <li tabindex="1">我的喜欢</li>
-          <li tabindex="1">歌单</li>
-          <li tabindex="1">歌单</li>
-          <li tabindex="1">歌单</li>
-          <li tabindex="1">歌单</li>
+        <ul @click="toPlayList">
+          <li
+            tabindex="1"
+            v-for="list in userPlayList"
+            :key="list.id"
+            :data-listId="list.id"
+          >
+            {{ list.name }}
+          </li>
         </ul>
       </nav>
       <main class="main">
-        <router-view></router-view>
+        <keep-alive include="LoginPage">
+          <router-view></router-view>
+        </keep-alive>
       </main>
     </div>
   </main>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "MiddleMain",
   methods: {
     toFindMusic() {
-      this.$router.push({ name: "findMusicPage" });
+      this.$router.push({
+        name: "FindMusic",
+      });
     },
-    toSearchMusic() {
-      this.$router.push({ name: "searchMusicPage" });
+    toMusicWords() {
+      this.$router.push({
+        name: "MusicWords",
+      });
     },
+    toPlayList(e) {
+      if (e.target.dataset) {
+        let id = e.target.dataset.listid;
+        this.$store.dispatch("FindMusicStore/getGedanInfo", id);
+      }
+    },
+  },
+  computed: {
+    ...mapState("UserStore", ["userPlayList"]),
   },
 };
 </script>

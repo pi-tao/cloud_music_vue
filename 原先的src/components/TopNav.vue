@@ -5,21 +5,22 @@
       <div class="icon"><img src="@/assets/icon.png" alt="" /></div>
       <div class="search">
         <button>&lt;</button>
-        <button>></button>
+        <button>&gt;</button>
         <label for="search"
           ><input
             type="text"
             placeholder="搜索"
             id="search"
             v-model="musicName"
-            @keyup.enter="senMusicName"
+            @keyup.enter="searchMusicId(musicName)"
         /></label>
-        <button>搜</button>
+        <button @click="searchMusicId(musicName)">搜</button>
       </div>
       <div class="user">
         <img src="@/assets/head.png" alt="" class="head" />
         <span class="userName">
-          <i>用户名 v</i>
+          <i v-if="!cookie" @click="login">登录 v</i>
+          <i v-if="cookie">{{ username }}</i>
           <!-- 用户信息 -->
           <div class="info">
             <div class="top">
@@ -85,23 +86,42 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "TopNav",
   data() {
     return {
       musicName: "",
-      page: null,
     };
   },
   methods: {
-    // 1.搜索音乐
-    senMusicName() {
-      let name = this.musicName.trim();
-      if (name) {
-        this.$store.dispatch("musicStore/sendMusicName", [name, this.page]);
-        this.$router.push({ name: "searchMusicPage" });
+    searchMusicId(data) {
+      if (data != "") {
+        this.$store.dispatch("FindMusicStore/getMusicId", data);
+        this.$bus.$emit("musicName", this.musicName);
+        this.$router.push({
+          name: "musicList",
+        });
       }
     },
+    login() {
+      this.$router.push({ name: "LoginPage" });
+    },
+  },
+  computed: {
+    ...mapState("UserStore", ["username", "cookie"]),
+  },
+  mounted() {
+    // 1.检查浏览器是否有cookie，有的话就直接登录
+    if (localStorage.getItem("userInfo")) {
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      this.$store.commit("UserStore/TOLOGIN", userInfo);
+    }
+    // 2.获取用户、账号详情
+    this.$store.dispatch("UserStore/getUserDetail");
+    this.$store.dispatch("UserStore/getUserAccount");
+    this.$store.dispatch("UserStore/getUserSubcount");
+    this.$store.dispatch("UserStore/getUserPlayList");
   },
 };
 </script>

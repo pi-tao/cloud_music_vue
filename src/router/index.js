@@ -9,48 +9,30 @@ VueRouter.prototype.push = function push(location) {
 VueRouter.prototype.replace = function replace(location) {
   return includPush.call(this, location).catch((err) => err);
 };
-import FindMusic from "@/pages/FindMusic";
-import musicList from "@/pages/musicList";
-import MusicWords from "@/pages/MusicWords";
-import LoginPage from "@/pages/LoginPage";
-import codeLogin from "@/pages/codeLogin";
-import gedanInfo from "@/pages/gedanInfo";
+import findMusicPage from "@/pages/findMusicPage";
+import searchMusicPage from "@/pages/searchMusicPage";
+import gedanList from "@/pages/gedanList";
 // 注册路由
 const router = new VueRouter({
   routes: [
     {
       path: "*",
-      redirect: "FindMusic",
+      redirect: "findMusicPage",
     },
     {
-      name: "FindMusic",
-      path: "/FindMusic",
-      component: FindMusic,
+      name: "findMusicPage",
+      path: "/findMusicPage",
+      component: findMusicPage,
     },
     {
-      name: "musicList",
-      path: "/musicList",
-      component: musicList,
+      name: "searchMusicPage",
+      path: "/searchMusicPage",
+      component: searchMusicPage,
     },
     {
-      name: "MusicWords",
-      path: "/MusicWords",
-      component: MusicWords,
-    },
-    {
-      name: "LoginPage",
-      path: "/LoginPage",
-      component: LoginPage,
-    },
-    {
-      name: "codeLogin",
-      path: "/codeLogin",
-      component: codeLogin,
-    },
-    {
-      name: "gedanInfo",
-      path: "/gedanInfo",
-      component: gedanInfo,
+      name: "gedanList",
+      path: "/gedanList",
+      component: gedanList,
     },
   ],
 });

@@ -1,14 +1,16 @@
 <template>
   <div class="musicList" style="display: block">
     <h2>
-      搜索 <span>{{ musicName }}</span>
+      搜索 <span>{{ searchText }}</span>
     </h2>
     <h6>你可能感兴趣</h6>
     <div class="info">
       <img src="@/assets/head.png" alt="" />
       <div class="cont">
-        <h5>歌手:{{ author }}</h5>
-        <h6>粉丝：5000万，<span>歌曲：345</span></h6>
+        <h5>歌手:{{ musicAuthor }}</h5>
+        <h6>
+          粉丝：5000万，<span>歌曲：{{ songCount }}</span>
+        </h6>
       </div>
     </div>
     <ul>
@@ -17,22 +19,23 @@
       <li tabindex="1">专辑</li>
       <li tabindex="1">视频</li>
       <li tabindex="1">歌单</li>
-      <span>共找到300首歌</span>
+      <span>共找到{{ songCount }}首歌</span>
     </ul>
     <div class="music">
       <div class="btn">
         <button class="a">播放全部</button><button class="b">下载全部</button>
       </div>
       <!-- 歌曲列表 -->
-      <ul class="musicList" @click="playMusic">
-        <li v-for="(list, index) in musicList" :key="list.id">
-          <i>{{ index }}</i
+      <ul class="musicList" @click="singleMusic">
+        <li v-for="(song, index) in songs" :key="song.id">
+          <i>{{ index + 1 }}</i
           ><em
-            :data-musicId="list.id"
-            :data-musicAuthor="list.artists[0].name"
-            :data-number="index"
-            >{{ list.name }}</em
-          ><span>{{ list.artists[0].name }}</span>
+            :data-index="index"
+            :data-musicname="song.name"
+            :data-musicid="song.id"
+            :data-musicauthor="song.artists[0].name"
+            >{{ song.name }}</em
+          ><span>{{ song.artists[0].name }}</span>
         </li>
       </ul>
     </div>
@@ -40,40 +43,25 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
-  name: "musicList",
-  data() {
-    return {
-      musicName: "",
-      author: "",
-    };
-  },
-  mounted() {
-    this.$bus.$on("musicName", (data) => {
-      this.musicName = data;
-    });
-    this.$bus.$on("author", (data) => {
-      this.author = data;
-    });
+  name: "searchMusicPage",
+  computed: {
+    ...mapGetters("musicStore", ["songs", "songCount", "musicAuthor"]),
+    ...mapState("musicStore", ["searchText"]),
   },
   methods: {
-    playMusic(e) {
+    singleMusic(e) {
       if (e.target.nodeName == "EM") {
-        let id = e.target.dataset.musicid;
-        this.$store.dispatch("SearchMusic/SearchMusic", id);
-        this.$bus.$emit(
-          "musicInfo",
-          e.target.innerText,
-          e.target.dataset.musicauthor,
-          e.target.dataset.number
-        );
-        this.$store.dispatch("MusicWordsStore/getMusicWords", id); //获取歌词
+        let musicInfo = {
+          index: e.target.dataset.index,
+          musicname: e.target.dataset.musicname,
+          musicid: e.target.dataset.musicid,
+          musicauthor: e.target.dataset.musicauthor,
+        };
+        this.$store.dispatch("musicStore/getMusic", musicInfo);
       }
     },
-  },
-  computed: {
-    ...mapState("FindMusicStore", ["musicList"]),
   },
 };
 </script>
@@ -82,6 +70,7 @@ export default {
 li {
   list-style: none;
 }
+
 @mc: #ec4141;
 @bc: #bf3b30;
 @bgc: #f5f5f6;
@@ -183,8 +172,7 @@ li {
           display: inline-block;
         }
         i {
-          width: 30px;
-          display: inline-block;
+          margin-right: 20px;
         }
         em {
           display: inline-block;

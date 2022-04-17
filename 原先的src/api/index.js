@@ -1,12 +1,11 @@
 import requests from "./requset";
 // 1.获取音乐id接口
-export const reqGetMusicId = ([name, offset = 0]) =>
+export const reqGetMusicId = (params) =>
   requests({
     url: "/search",
     method: "get",
     params: {
-      keywords: name,
-      offset: offset,
+      keywords: params,
     },
   });
 // 2.获取音乐url
