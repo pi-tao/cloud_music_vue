@@ -12,7 +12,7 @@
             placeholder="搜索"
             id="search"
             v-model="musicName"
-            @keyup.enter="sendMusicName"
+            @keyup.enter="senMusicName"
         /></label>
         <button>搜</button>
       </div>
@@ -94,10 +94,13 @@ export default {
     };
   },
   methods: {
-    sendMusicName() {
-      this.$store.commit("musicStore/MUSICNAME", this.musicName);
-      this.$store.dispatch("musicStore/musicList", [this.musicName, this.page]);
-      this.$router.push({ name: "searchMusicPage" });
+    // 1.搜索音乐
+    senMusicName() {
+      let name = this.musicName.trim();
+      if (name) {
+        this.$store.dispatch("musicStore/sendMusicName", [name, this.page]);
+        this.$router.push({ name: "searchMusicPage" });
+      }
     },
     back() {
       history.back();

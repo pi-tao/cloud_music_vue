@@ -1,44 +1,47 @@
 <template>
-  <div class="gedanlist" v-show="gedanlistInfo">
-    <div class="top">
-      <img :src="gedanlistInfo.coverImgUrl" alt="" />
+  <div class="gedanlist">
+    <div class="top" v-if="gedanImg">
+      <img :src="gedanImg" alt="" />
       <div class="info">
-        <h4>{{ gedanlistInfo.name }}</h4>
+        <h4>{{ gedanName }}</h4>
         <h6>
-          <img :src="gedanlistInfo.authorImg" /><span>
-            {{ gedanlistInfo.authornickname }} </span
+          <img :src="gedanAuthorImg" /><span> {{ gedanAuthorName }} </span
           ><i>创建时间</i>
         </h6>
         <ul class="btn">
-          <li>播放全部</li>
+          <li @click="playAll">播放全部</li>
           <li>收藏</li>
           <li>分享</li>
           <li>下载全部</li>
         </ul>
         <div class="b">
           <ul>
-            <li>标签:<span> </span></li>
             <li>
-              歌曲数量:<span> {{ songCount }} </span>
+              标签:<span v-for="(tag, index) in gedanTags" :key="index"
+                >{{ tag }}
+              </span>
+            </li>
+            <li>
+              歌曲数量:<span> {{ gedanMusicList.length }} </span>
             </li>
             <li>
               <span class="jianjie"
-                >简介: &nbsp;&nbsp; {{ gedanlistInfo.description }}
+                >简介: &nbsp;&nbsp;{{ gedanDescrption }}
               </span>
             </li>
           </ul>
         </div>
       </div>
-      <ul class="musicList" @click="sendMusicId">
-        <li v-for="(music, index) in musicList" :key="music.id">
+      <ul class="musicList" @click="senMusicInfo">
+        <li v-for="(music, index) in gedanMusicList" :key="music.id">
           <i> {{ index }} </i
           ><em
             :data-index="index"
-            :data-name="music.name"
-            :data-id="music.id"
-            :data-author="music.ar[0].name"
+            :data-musicname="music.name"
+            :data-musicid="music.id"
+            :data-musicauthor="music.ar[0].name"
             >{{ music.name }} </em
-          ><span>{{ music.ar[0].name }} </span>
+          ><span>{{ music.ar[0].name }}</span>
         </li>
       </ul>
     </div>
@@ -46,26 +49,48 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "gedanList",
   computed: {
-    ...mapState("musicStore", ["musicList", "gedanlistInfo", "songCount"]),
+    ...mapGetters("findMusicStore", [
+      "gedanMusicList",
+      "gedanTotal",
+      "gedanImg",
+      "gedanDescrption",
+      "gedanName",
+      "gedanAuthorImg",
+      "gedanAuthorName",
+      "gedanAuthorSignature",
+      "gedanPlayCount",
+      "gedanShareCount",
+      "gedanTags",
+    ]),
   },
   methods: {
-    sendMusicId(e) {
+    senMusicInfo(e) {
       if (e.target.nodeName == "EM") {
-        // console.log(e.target.dataset);
         let musicInfo = {
-          address: "gedanList",
           index: e.target.dataset.index,
-          id: e.target.dataset.id,
-          name: e.target.dataset.name,
-          author: e.target.dataset.author,
+          musicname: e.target.dataset.musicname,
+          musicid: e.target.dataset.musicid,
+          musicauthor: e.target.dataset.musicauthor,
         };
         // console.log(musicInfo);
-        this.$store.dispatch("musicStore/musicInfo", musicInfo);
+        this.$store.dispatch("musicStore/getMusic", musicInfo);
+        this.$store.commit("musicStore/GEDANLIST", this.gedanMusicList);
       }
+    },
+    playAll() {
+      let musicInfo = {
+        index: 0,
+        musicname: this.gedanMusicList[0].name,
+        musicid: this.gedanMusicList[0].id,
+        musicauthor: this.gedanMusicList[0].ar[0].name,
+      };
+      // console.log(musicInfo);
+      this.$store.dispatch("musicStore/getMusic", musicInfo);
+      this.$store.commit("musicStore/GEDANLIST", this.gedanMusicList);
     },
   },
 };

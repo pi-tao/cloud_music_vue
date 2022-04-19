@@ -85,12 +85,12 @@ export const reqGetBanner = () =>
     },
   });
 // 10.获取热门歌单
-export const reqGetGedan = (params = 1) =>
+export const reqGetGedan = () =>
   requests({
     url: "/top/playlist",
     params: {
       order: "hot",
-      offset: 50 * params,
+      limit: 50,
     },
   });
 // 11.获取歌单详细信息

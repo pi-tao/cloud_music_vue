@@ -1,15 +1,15 @@
 <template>
   <div class="musicList" style="display: block">
     <h2>
-      搜索 <span>{{ searchText }} </span>
+      搜索 <span>{{ searchText }}</span>
     </h2>
     <h6>你可能感兴趣</h6>
     <div class="info">
       <img src="@/assets/head.png" alt="" />
       <div class="cont">
-        <h5>歌手: musicAuthor</h5>
+        <h5>歌手:{{ musicAuthor }}</h5>
         <h6>
-          粉丝：5000万，<span>歌曲：{{ songCount }} </span>
+          粉丝：5000万，<span>歌曲：{{ songCount }}</span>
         </h6>
       </div>
     </div>
@@ -19,23 +19,23 @@
       <li tabindex="1">专辑</li>
       <li tabindex="1">视频</li>
       <li tabindex="1">歌单</li>
-      <span>共找到{{ songCount }} 首歌</span>
+      <span>共找到{{ songCount }}首歌</span>
     </ul>
     <div class="music">
       <div class="btn">
         <button class="a">播放全部</button><button class="b">下载全部</button>
       </div>
       <!-- 歌曲列表 -->
-      <ul class="musicList" @click="sendMusicId">
-        <li v-for="(music, index) in musicList" :key="music.id">
+      <ul class="musicList" @click="singleMusic">
+        <li v-for="(song, index) in songs" :key="song.id">
           <i>{{ index + 1 }}</i
           ><em
             :data-index="index"
-            :data-name="music.name"
-            :data-id="music.id"
-            :data-author="music.artists[0].name"
-            >{{ music.name }}</em
-          ><span> {{ music.artists[0].name }} </span>
+            :data-musicname="song.name"
+            :data-musicid="song.id"
+            :data-musicauthor="song.artists[0].name"
+            >{{ song.name }}</em
+          ><span>{{ song.artists[0].name }}</span>
         </li>
       </ul>
     </div>
@@ -43,24 +43,23 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
+  name: "searchMusicPage",
   computed: {
-    ...mapState("musicStore", ["musicList", "searchText", "songCount"]),
+    ...mapGetters("musicStore", ["songs", "songCount", "musicAuthor"]),
+    ...mapState("musicStore", ["searchText"]),
   },
   methods: {
-    sendMusicId(e) {
+    singleMusic(e) {
       if (e.target.nodeName == "EM") {
-        // console.log(e.target.dataset);
         let musicInfo = {
-          address: "searchMusicPage",
           index: e.target.dataset.index,
-          id: e.target.dataset.id,
-          name: e.target.dataset.name,
-          author: e.target.dataset.author,
+          musicname: e.target.dataset.musicname,
+          musicid: e.target.dataset.musicid,
+          musicauthor: e.target.dataset.musicauthor,
         };
-        // console.log(musicInfo);
-        this.$store.dispatch("musicStore/musicInfo", musicInfo);
+        this.$store.dispatch("musicStore/getMusic", musicInfo);
       }
     },
   },

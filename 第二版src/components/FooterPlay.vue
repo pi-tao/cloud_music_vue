@@ -10,10 +10,10 @@
     ></audio>
     <div class="wrap">
       <div class="content">
-        <img v-if="musicImgUrl" :src="musicImgUrl" alt="" />
+        <img :src="musicImg" alt="" />
         <div class="musicInfo">
           <h4>{{ musicName }}</h4>
-          <span> {{ musicAuthor }} </span>
+          <span>{{ musicAuthor }}</span>
         </div>
         <div class="play">
           <div class="top">
@@ -34,6 +34,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
+
 export default {
   name: "FooterPlay",
   data() {
@@ -45,13 +46,14 @@ export default {
   },
   computed: {
     ...mapGetters("musicStore", [
-      "musicIndex",
       "musicUrl",
+      "musicIndex",
       "musicName",
       "musicAuthor",
-      "musicAddress",
+      "musicImg",
+      "songs",
     ]),
-    ...mapState("musicStore", ["musicList", "musicImgUrl"]),
+    ...mapState("musicStore", ["gedanList"]),
   },
   methods: {
     // 1.播放或者暂停
@@ -70,50 +72,52 @@ export default {
     // 2.上一曲
     last() {
       if (this.musicIndex > 0) {
-        if (this.musicList) {
-          let index = this.musicIndex * 1 - 1;
-          if (this.musicAddress == "searchMusicPage") {
+        if (this.$refs.audio.src) {
+          if (this.songs) {
+            let index = this.musicIndex * 1 - 1;
             let musicInfo = {
               index: index,
-              id: this.musicList[index].id,
-              name: this.musicList[index].name,
-              author: this.musicList[index].artists[0].name,
+              musicname: this.songs[index].name,
+              musicid: this.songs[index].id,
+              musicauthor: this.songs[index].artists[0].name,
             };
-            this.$store.dispatch("musicStore/musicInfo", musicInfo);
-          } else if (this.musicAddress == "gedanList") {
+            this.$store.dispatch("musicStore/getMusic", musicInfo);
+          } else if (this.gedanList) {
+            let index = this.musicIndex * 1 - 1;
             let musicInfo = {
               index: index,
-              id: this.musicList[index].id,
-              name: this.musicList[index].name,
-              author: this.musicList[index].ar[0].name,
+              musicname: this.gedanList[index].name,
+              musicid: this.gedanList[index].id,
+              musicauthor: this.gedanList[index].ar[0].name,
             };
-            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+            // console.log(musicInfo);
+            this.$store.dispatch("musicStore/getMusic", musicInfo);
           }
         }
       }
     },
     // 3.下一曲
     next() {
-      if (this.musicIndex >= 0) {
-        if (this.musicList) {
+      if (this.$refs.audio.src) {
+        if (this.songs) {
           let index = this.musicIndex * 1 + 1;
-          if (this.musicAddress == "searchMusicPage") {
-            let musicInfo = {
-              index: index,
-              id: this.musicList[index].id,
-              name: this.musicList[index].name,
-              author: this.musicList[index].artists[0].name,
-            };
-            this.$store.dispatch("musicStore/musicInfo", musicInfo);
-          } else if (this.musicAddress == "gedanList") {
-            let musicInfo = {
-              index: index,
-              id: this.musicList[index].id,
-              name: this.musicList[index].name,
-              author: this.musicList[index].ar[0].name,
-            };
-            this.$store.dispatch("musicStore/musicInfo", musicInfo);
-          }
+          let musicInfo = {
+            index: index,
+            musicname: this.songs[index].name,
+            musicid: this.songs[index].id,
+            musicauthor: this.songs[index].artists[0].name,
+          };
+          this.$store.dispatch("musicStore/getMusic", musicInfo);
+        } else if (this.gedanList) {
+          let index = this.musicIndex * 1 + 1;
+          let musicInfo = {
+            index: index,
+            musicname: this.gedanList[index].name,
+            musicid: this.gedanList[index].id,
+            musicauthor: this.gedanList[index].ar[0].name,
+          };
+          // console.log(musicInfo);
+          this.$store.dispatch("musicStore/getMusic", musicInfo);
         }
       }
     },
@@ -122,7 +126,6 @@ export default {
       // console.log("播放结束");
       this.next();
     },
-
     // 5.获取播放进度
     time() {
       if (this.$refs.audio.currentTime) {

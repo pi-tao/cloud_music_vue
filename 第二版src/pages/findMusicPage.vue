@@ -16,8 +16,12 @@
       <div class="lbt">
         <div class="swiper-container">
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img alt="" />
+            <div
+              class="swiper-slide"
+              v-for="(banner, index) in banners"
+              :key="index"
+            >
+              <img :src="banner.imageUrl" alt="" />
             </div>
           </div>
           <!-- 如果需要分页器 -->
@@ -29,9 +33,9 @@
         <h3>推荐歌单 ></h3>
         <div class="gedan">
           <ul @click="toGedan">
-            <li v-for="gedan in gedanList" :key="gedan.id">
+            <li v-for="gedan in gedanLists" :key="gedan.id">
               <div class="gedan_detail">
-                <img :src="gedan.coverImgUrl" :data-id="gedan.id" />
+                <img :src="gedan.coverImgUrl" alt="" :data-id="gedan.id" />
                 <h5>{{ gedan.description }}</h5>
               </div>
             </li>
@@ -137,16 +141,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import Swiper from "swiper";
 import "swiper/swiper-bundle.min.css";
 export default {
   name: "findMusicPage",
-  data() {
-    return {
-      page: 1,
-    };
-  },
   mounted() {
     // 1.注册轮播图
     new Swiper(".swiper-container", {
@@ -160,17 +159,20 @@ export default {
         clickable: true,
       },
     });
-    this.$store.dispatch("musicStore/gedanList", this.page);
+    // 2.获取轮播图资源
+    this.$store.dispatch("findMusicStore/getBanner");
+    // 3.获取推荐歌单信息
+    this.$store.dispatch("findMusicStore/getGedan");
   },
   computed: {
-    ...mapState("musicStore", ["gedanList"]),
+    ...mapState("findMusicStore", ["banners"]),
+    ...mapGetters("findMusicStore", ["gedanLists"]),
   },
   methods: {
     toGedan(e) {
       if (e.target.dataset) {
         let id = e.target.dataset.id;
-        // console.log(id);
-        this.$store.dispatch("musicStore/gedanInfo", id);
+        this.$store.dispatch("findMusicStore/gedanInfo", id);
         this.$router.push({ name: "gedanList" });
       }
     },
