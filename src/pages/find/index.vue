@@ -3,176 +3,36 @@
     <!-- 发现音乐导航栏 -->
     <nav class="findNav">
       <ul>
-        <li tabindex="1">个性推荐</li>
-        <li tabindex="1">专属定制</li>
-        <li tabindex="1">歌单</li>
-        <li tabindex="1">排行榜</li>
-        <li tabindex="1">最新音乐</li>
+        <li tabindex="1" @click="to_rec">个性推荐</li>
+        <li tabindex="1" @click="to_gedan_list">全部歌单</li>
+        <li tabindex="1" @click="to_rank">排行榜</li>
+        <li tabindex="1" @click="to_singer">歌手</li>
+        <li tabindex="1" @click="to_new_music">最新音乐</li>
       </ul>
     </nav>
-    <!-- 发现音乐内容 -->
-    <main class="text">
-      <!-- 轮播图 -->
-      <div class="lbt">
-        <div class="swiper-container">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img alt="" />
-            </div>
-          </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-        </div>
-      </div>
-      <!-- 推荐 -->
-      <div class="tuijian">
-        <h3>推荐歌单 ></h3>
-        <div class="gedan">
-          <ul @click="toGedan">
-            <li v-for="gedan in gedanList" :key="gedan.id">
-              <div class="gedan_detail">
-                <img :src="gedan.coverImgUrl" :data-id="gedan.id" />
-                <h5>{{ gedan.description }}</h5>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <!-- 博客 -->
-      <div class="boke">
-        <h3>热门播客 ></h3>
-        <ul>
-          <li>
-            <img src="@/assets/2.jpg" alt="" />
-            <div class="info">
-              <h4>歌曲内容</h4>
-              <h5>content<br />&nbsp;&nbsp;&nbsp;&nbsp;歌曲简介</h5>
-            </div>
-          </li>
-          <li>
-            <img src="@/assets/2.jpg" alt="" />
-            <div class="info">
-              <h4>歌曲内容</h4>
-              <h5>content<br />&nbsp;&nbsp;&nbsp;&nbsp;歌曲简介</h5>
-            </div>
-          </li>
-          <li>
-            <img src="@/assets/2.jpg" alt="" />
-            <div class="info">
-              <h4>歌曲内容</h4>
-              <h5>content<br />&nbsp;&nbsp;&nbsp;&nbsp;歌曲简介</h5>
-            </div>
-          </li>
-          <li>
-            <img src="@/assets/2.jpg" alt="" />
-            <div class="info">
-              <h4>歌曲内容</h4>
-              <h5>content<br />&nbsp;&nbsp;&nbsp;&nbsp;歌曲简介</h5>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <!-- 独家放送 -->
-      <div class="dujia">
-        <h3>独家放送 ></h3>
-        <ul>
-          <li>
-            <img src="@/assets/3.jpg" alt="" />
-            <h5>歌曲详情</h5>
-          </li>
-          <li>
-            <img src="@/assets/3.jpg" alt="" />
-            <h5>歌曲详情</h5>
-          </li>
-          <li>
-            <img src="@/assets/3.jpg" alt="" />
-            <h5>歌曲详情</h5>
-          </li>
-        </ul>
-      </div>
-      <!-- 最新音乐 -->
-      <div class="newMusic">
-        <h3>最新音乐 ></h3>
-        <ul>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-          <li>
-            <img src="@/assets/4.jpg" alt="" />
-            <h5>歌曲内容</h5>
-          </li>
-        </ul>
-      </div>
-    </main>
+    <!-- 推荐歌单 -->
+    <router-view class="page"></router-view>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import Swiper from "swiper";
-import "swiper/swiper-bundle.min.css";
 export default {
-  name: "findMusicPage",
-  data() {
-    return {
-      page: 1,
-    };
-  },
-  mounted() {
-    // 1.注册轮播图
-    new Swiper(".swiper-container", {
-      slidesPerView: 3,
-      spaceBetween: 1,
-      autoplay: true,
-      centeredSlides: true,
-      loop: true,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-    });
-    this.$store.dispatch("musicStore/gedanList", this.page);
-  },
-  computed: {
-    ...mapState("musicStore", ["gedanList"]),
-  },
+  name: "find_",
   methods: {
-    toGedan(e) {
-      if (e.target.dataset) {
-        let id = e.target.dataset.id;
-        // console.log(id);
-        this.$store.dispatch("musicStore/gedanInfo", id);
-        this.$router.push({ name: "gedanList" });
-      }
+    to_rec() {
+      this.$router.push({ name: "persion_recommend" });
+    },
+    to_gedan_list() {
+      this.$router.push({ name: "gedan_list" });
+    },
+    to_rank() {
+      this.$router.push({ name: "rank" });
+    },
+    to_singer() {
+      this.$router.push({ name: "singer" });
+    },
+    to_new_music() {
+      this.$router.push({ name: "new_music" });
     },
   },
 };
@@ -417,6 +277,9 @@ export default {
         }
       }
     }
+  }
+  .page {
+    margin-top: 50px;
   }
 }
 </style>

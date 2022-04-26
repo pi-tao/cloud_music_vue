@@ -1,19 +1,19 @@
 <template>
   <!-- 底部 -->
   <footer id="footer">
+    <audio
+      :src="musicUrl"
+      autoplay
+      ref="audio"
+      @ended="loopPlay"
+      @timeupdate="time"
+    ></audio>
     <div class="wrap">
-      <audio
-        autoplay
-        :src="musicInfo.url"
-        @ended="loopPlay"
-        @timeupdate="time"
-        ref="audio"
-      ></audio>
       <div class="content">
-        <img :src="musicInfo.img" alt="" v-show="musicInfo.img" />
+        <img v-if="musicImgUrl" :src="musicImgUrl" alt="" />
         <div class="musicInfo">
-          <h4>{{ musicInfo.name }}</h4>
-          <span> {{ musicInfo.author }} </span>
+          <h4>{{ musicName }}</h4>
+          <span> {{ musicAuthor }} </span>
         </div>
         <div class="play">
           <div class="top">
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "FooterPlay",
   data() {
@@ -44,7 +44,14 @@ export default {
     };
   },
   computed: {
-    ...mapState("musicStore", ["musicInfo", "musicListInfo"]),
+    ...mapGetters("musicStore", [
+      "musicIndex",
+      "musicUrl",
+      "musicName",
+      "musicAuthor",
+      "musicAddress",
+    ]),
+    ...mapState("musicStore", ["musicList", "musicImgUrl"]),
   },
   methods: {
     // 1.播放或者暂停
@@ -62,41 +69,55 @@ export default {
     },
     // 2.上一曲
     last() {
-      // console.log(this.musicInfo);
-      if (this.musicInfo.index * 1 > 0) {
-        if (this.musicListInfo) {
-          let index = this.musicInfo.index * 1 - 1;
-          let musicInfo = {
-            index: index,
-            id: this.musicListInfo[index].id,
-            name: this.musicListInfo[index].name,
-            img: this.musicListInfo[index].al.picUrl,
-            author:
-              this.musicListInfo[index].ar[0].name ||
-              this.musicListInfo[index].artists[0].name,
-          };
-          // console.log(musicInfo);
-          this.$store.dispatch("musicStore/musicInfo", musicInfo);
+      if (this.musicIndex > 0) {
+        if (this.musicList) {
+          let index = this.musicIndex * 1 - 1;
+          if (this.musicAddress == "searchMusicPage") {
+            let musicInfo = {
+              address: "searchMusicPage",
+              index: index,
+              id: this.musicList[index].id,
+              name: this.musicList[index].name,
+              author: this.musicList[index].artists[0].name,
+            };
+            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          } else if (this.musicAddress == "gedanList") {
+            let musicInfo = {
+              address: "gedanList",
+              index: index,
+              id: this.musicList[index].id,
+              name: this.musicList[index].name,
+              author: this.musicList[index].ar[0].name,
+            };
+            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          }
         }
       }
     },
     // 3.下一曲
     next() {
-      // console.log(this.musicInfo);
-      if (this.musicInfo.index * 1 >= 0) {
-        if (this.musicListInfo) {
-          let index = this.musicInfo.index * 1 + 1;
-          let musicInfo = {
-            index: index,
-            id: this.musicListInfo[index].id,
-            name: this.musicListInfo[index].name,
-            img: this.musicListInfo[index].al.picUrl,
-            author:
-              this.musicListInfo[index].ar[0].name ||
-              this.musicListInfo[index].artists[0].name,
-          };
-          // console.log(musicInfo);
-          this.$store.dispatch("musicStore/musicInfo", musicInfo);
+      if (this.musicIndex >= 0) {
+        if (this.musicList) {
+          let index = this.musicIndex * 1 + 1;
+          if (this.musicAddress == "searchMusicPage") {
+            let musicInfo = {
+              address: "searchMusicPage",
+              index: index,
+              id: this.musicList[index].id,
+              name: this.musicList[index].name,
+              author: this.musicList[index].artists[0].name,
+            };
+            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          } else if (this.musicAddress == "gedanList") {
+            let musicInfo = {
+              address: "gedanList",
+              index: index,
+              id: this.musicList[index].id,
+              name: this.musicList[index].name,
+              author: this.musicList[index].ar[0].name,
+            };
+            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          }
         }
       }
     },
@@ -105,6 +126,7 @@ export default {
       // console.log("播放结束");
       this.next();
     },
+
     // 5.获取播放进度
     time() {
       if (this.$refs.audio.currentTime) {
@@ -115,7 +137,7 @@ export default {
     },
     // 6.控制播放进度
     control(e) {
-      if (this.musicInfo.name) {
+      if (this.musicName) {
         let x = (e.offsetX / e.target.offsetWidth).toFixed(2); //offsetX获取鼠标在元素内点击的x坐标，offsetWidth获取元素宽度
         let allTime = this.$refs.audio.duration;
         this.$refs.audio.currentTime = x * allTime;

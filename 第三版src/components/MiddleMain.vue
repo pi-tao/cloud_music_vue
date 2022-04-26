@@ -4,9 +4,12 @@
       <!-- 左边导航栏 -->
       <nav class="leftNav">
         <ul>
-          <li tabindex="1" @click="toFind">发现音乐</li>
-          <li tabindex="1" @click="toVideo">视频</li>
-          <li tabindex="1" @click="toFM">私人 FM</li>
+          <li tabindex="1" @click="toFindMusic">发现音乐</li>
+          <li tabindex="1">搜索</li>
+          <li tabindex="1">视频</li>
+          <li tabindex="1">关注</li>
+          <li tabindex="1">直播</li>
+          <li tabindex="1">私人 FM</li>
         </ul>
         <h3>我的音乐</h3>
         <ul>
@@ -36,14 +39,11 @@
 export default {
   name: "MiddleMain",
   methods: {
-    toFind() {
-      this.$router.push({ name: "find" });
+    toFindMusic() {
+      this.$router.push({ name: "findMusicPage" });
     },
-    toVideo() {
-      this.$router.push({ name: "musicVideo" });
-    },
-    toFM() {
-      this.$router.push({ name: "FM" });
+    toSearchMusic() {
+      this.$router.push({ name: "searchMusicPage" });
     },
   },
 };
@@ -92,7 +92,7 @@ export default {
     overflow-x: hidden;
     margin-left: 200px;
     margin-bottom: 60px;
-    // height: 800px;
+    height: 800px;
     background-color: @bgc;
     span {
       font-size: 2000px;

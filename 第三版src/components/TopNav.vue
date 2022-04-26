@@ -4,22 +4,22 @@
     <div class="wrap">
       <div class="icon"><img src="@/assets/icon.png" alt="" /></div>
       <div class="search">
-        <button>&lt;</button>
-        <button>></button>
+        <button @click="back">&lt;</button>
+        <button @click="forward">></button>
         <label for="search"
           ><input
             type="text"
             placeholder="搜索"
             id="search"
-            @keyup.enter="tosearch"
-            v-model="info.name"
+            v-model="musicName"
+            @keyup.enter="sendMusicName"
         /></label>
-        <button @click="tosearch">搜</button>
+        <button>搜</button>
       </div>
       <div class="user">
         <img src="@/assets/head.png" alt="" class="head" />
         <span class="userName">
-          <i>用户名 v</i>
+          <i @click="toLogin">用户名 v</i>
           <!-- 用户信息 -->
           <div class="info">
             <div class="top">
@@ -89,18 +89,24 @@ export default {
   name: "TopNav",
   data() {
     return {
-      info: {
-        name: "",
-        offset: 1,
-      },
+      musicName: "",
+      page: null,
     };
   },
   methods: {
-    tosearch() {
-      if (this.info.name != "") {
-        this.$router.push({ name: "search" });
-        this.$store.dispatch("musicStore/musicName", this.info);
-      }
+    sendMusicName() {
+      this.$store.commit("musicStore/MUSICNAME", this.musicName);
+      this.$store.dispatch("musicStore/musicList", [this.musicName, this.page]);
+      this.$router.push({ name: "searchMusicPage" });
+    },
+    back() {
+      history.back();
+    },
+    forward() {
+      history.forward();
+    },
+    toLogin() {
+      this.$router.push({ name: "loginPage" });
     },
   },
 };

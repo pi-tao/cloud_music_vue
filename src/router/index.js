@@ -9,42 +9,66 @@ VueRouter.prototype.push = function push(location) {
 VueRouter.prototype.replace = function replace(location) {
   return includPush.call(this, location).catch((err) => err);
 };
-import findMusicPage from "@/pages/findMusicPage";
-import searchMusicPage from "@/pages/searchMusicPage";
-import gedanList from "@/pages/gedanList";
-import loginPage from "@/pages/loginPage";
-import codeLogin from "@/pages/codeLogin";
+
 // 注册路由
 const router = new VueRouter({
   routes: [
     {
       path: "*",
-      redirect: "findMusicPage",
+      redirect: "/find",
     },
     {
-      name: "findMusicPage",
-      path: "/findMusicPage",
-      component: findMusicPage,
+      name: "find",
+      path: "/find",
+      component: () => import("@/pages/find"),
+      redirect: "/persion_recommend",
+      children: [
+        {
+          name: "persion_recommend",
+          path: "/persion_recommend",
+          component: () => import("@/pages/find/persion_recommend"),
+        },
+        {
+          name: "gedan_list",
+          path: "gedan_list",
+          component: () => import("@/pages/find/gedan_list"),
+        },
+        {
+          name: "rank",
+          path: "rank",
+          component: () => import("@/pages/find/rank_list"),
+        },
+        {
+          name: "singer",
+          path: "singer",
+          component: () => import("@/pages/find/singer"),
+        },
+        {
+          name: "new_music",
+          path: "new_music",
+          component: () => import("@/pages/find/new_music"),
+        },
+        {
+          name: "list_info",
+          path: "list_info",
+          component: () => import("@/pages/find/list_info"),
+        },
+      ],
     },
     {
-      name: "searchMusicPage",
-      path: "/searchMusicPage",
-      component: searchMusicPage,
+      name: "musicVideo",
+      path: "/musicVideo",
+      component: () => import("@/pages/musicVideo"),
     },
     {
-      name: "gedanList",
-      path: "/gedanList",
-      component: gedanList,
+      name: "FM",
+      path: "/FM",
+      component: () => import("@/pages/FM"),
     },
     {
-      name: "loginPage",
-      path: "/loginPage",
-      component: loginPage,
-    },
-    {
-      name: "codeLogin",
-      path: "/codeLogin",
-      component: codeLogin,
+      name: "search",
+      path: "/search",
+      component: () => import("@/pages/search"),
     },
   ],
 });

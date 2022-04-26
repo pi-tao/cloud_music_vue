@@ -1,32 +1,78 @@
-import { reqGetMusicId } from "@/api";
-import { reqGetMusicURL } from "@/api";
-import { reqMusicDetail } from "@/api";
+import { reqGetBanner } from "@/api";
 import { reqGetGedan } from "@/api";
 import { reqGetGedanInfo } from "@/api";
-// import { reqMusicDetail } from "@/api";
+import { reqMusicDetail } from "@/api";
+import { reqGetMusicURL } from "@/api";
+import { reqGetMusicId } from "@/api";
 export default {
   namespaced: true,
   state: {
-    searchText: undefined, //搜索的内容
-    songCount: null, //音乐数量
-    gedanCount: null, //歌单数量
-    gedanlistInfo: {}, //歌单详细信息
-    musicList: [], //music列表
-    gedanList: [],
-    musicInfo: {}, //当前播放音乐的信息
-    musicImgUrl: undefined,
+    banners: [] || undefined, //1.banner图片
+    playlists: {} || undefined, //2.歌单列表
+    gedanInfo: {} || undefined, //3.歌单信息
+    musicListInfo: [] || undefined, //4.音乐列表信息
+    musicInfo: {} || undefined, //5.当前播放歌曲的信息
+    total: null, //6.搜索歌曲的总数
   },
   actions: {
-    // 1.发送音乐名获取音乐列表
-    async musicList({ commit }, data) {
-      let result = await reqGetMusicId(data);
+    // 1.获取banner图片
+    async getBanner({ commit }) {
+      let result = await reqGetBanner();
       // console.log(result);
-      if (result.code === 200) {
-        commit("MUSICLIST", result.result);
+      if (result.code == 200) {
+        commit("GETBANNER", result.banners);
       }
     },
-    // 2.发送音乐信息
-    async musicInfo(context, data) {
+    // 2.获取推荐歌单列表
+    async gedan_list({ commit }, data = 5) {
+      let result = await reqGetGedan(data);
+      // console.log(result);
+      if (result.code == 200) {
+        commit("GEDAN_LIST", result);
+      }
+    },
+    // 3.获取歌单具体信息
+    async getGedanInfo(context, data) {
+      let result = await reqGetGedanInfo(data);
+      // console.log(result);
+      if (result.code == 200) {
+        // 1.存储歌单信息
+        let playlistInfo = {
+          coverImgUrl: result.playlist.coverImgUrl, //1.歌单封面
+          createTime: result.playlist.createTime, //2.歌单创建时间
+          description: result.playlist.description, //3.歌单描述
+          name: result.playlist.name, //4.歌单名
+          playCount: result.playlist.playCount, //5.歌单点击量
+          shareCount: result.playlist.shareCount, //6.分享数
+          subscribedCount: result.playlist.subscribedCount, //7.订阅量
+          authorImg: result.playlist.creator.avatarUrl, //8.作者头像
+          authorbackgroundUrl: result.playlist.creator.backgroundUrl, //9作者北京图片
+          authornickname: result.playlist.creator.nickname, //10.作者名
+          authorsignature: result.playlist.creator.signature, //11.作者个性签名
+          authoruserId: result.playlist.creator.userId, //12.作者id
+          total: result.playlist.trackIds.length,
+        };
+        context.commit("GEDAN_INFO", playlistInfo);
+        let trackIds = result.playlist.trackIds;
+        // console.log(trackIds);
+        let arr = [];
+        trackIds.forEach((item) => {
+          arr.unshift(item.id);
+        });
+        // console.log(arr.toString());
+        context.dispatch("getlistInfo", arr.toString());
+      }
+    },
+    // 4.获取歌单内所有歌曲信息
+    async getlistInfo({ commit }, data) {
+      let result = await reqMusicDetail(data);
+      // console.log(result);
+      if (result.code == 200) {
+        commit("MUSICLISTINFO", result.songs);
+      }
+    },
+    // 5,获取音乐url并保存当前音乐信息
+    async musicInfo({ commit }, data) {
       let result = await reqGetMusicURL(data.id);
       // console.log(result);
       if (result.code == 200) {
@@ -36,109 +82,67 @@ export default {
           url,
         };
         // console.log(musicInfo);
-        context.commit("MUSICINFO", musicInfo);
-        context.dispatch("musicDetail", data.id);
+        commit("MUSICINFO", musicInfo);
       }
     },
-    // 3.获取音乐url
-    async musicDetail({ commit }, data) {
-      let result = await reqMusicDetail(data);
-      if (result.code == 200) {
-        let musicImgUrl = result.songs[0].al.picUrl || undefined;
-        commit("MUSICDETAIL", musicImgUrl);
-        // console.log(musicImgUrl);
-      }
-    },
-    // 4.获取歌单列表
-    async gedanList({ commit }, data) {
-      let result = await reqGetGedan(data);
-      if (result.code == 200) {
-        // console.log(result);
-        commit("GEDANLIST", result);
-      }
-    },
-    // 5.获取歌单详细信息
-    async gedanInfo({ commit }, data) {
-      let result = await reqGetGedanInfo(data);
+    // 6.获取音乐id
+    async musicName({ commit }, data) {
+      let result = await reqGetMusicId(data);
       // console.log(result);
       if (result.code == 200) {
-        let trackIds = result.playlist.trackIds;
-        let playlistInfo = {
-          coverImgUrl: result.playlist.coverImgUrl,
-          createTime: result.playlist.createTime,
-          description: result.playlist.description,
-          name: result.playlist.name,
-          playCount: result.playlist.playCount,
-          shareCount: result.playlist.shareCount,
-          subscribedCount: result.playlist.subscribedCount,
-          authorImg: result.playlist.creator.avatarUrl,
-          authorbackgroundUrl: result.playlist.creator.backgroundUrl,
-          authornickname: result.playlist.creator.nickname,
-          authorsignature: result.playlist.creator.signature,
-          authoruserId: result.playlist.creator.userId,
+        commit("MUSICLISTINFO", result.result.songs);
+        commit("MUSIC_TOTAL", result.result.songCount);
+      }
+    },
+    // 7.搜索页获取音乐详情
+    async musicDetail(context, data) {
+      // console.log(data);
+      let result = await reqMusicDetail(data.id);
+      if (result.code == 200) {
+        // console.log(result.songs);
+        let info = {
+          ...data,
+          author: result.songs[0].ar[0].name,
+          img: result.songs[0].al.picUrl,
         };
-        commit("GEDANLISTINFO", playlistInfo);
-        // console.log(trackIds);
-        let arr = [];
-        trackIds.forEach((item) => {
-          arr.unshift(item.id);
-        });
-        // console.log(arr);
-        let result1 = await reqMusicDetail(arr.toString());
-        // console.log(result1);
-        if (result1.code == 200) {
-          let gedanlistInfo = {
-            songCount: result1.songs.length,
-            songs: result1.songs,
-          };
-          commit("MUSICLIST", gedanlistInfo);
-        }
+        context.dispatch("musicInfo", info);
       }
     },
   },
   mutations: {
-    // 1.保存搜索的音乐列表
-    MUSICLIST(state, { songCount, songs }) {
-      state.musicList = songs;
-      state.songCount = songCount;
+    // 1.存储banner图片
+    GETBANNER(state, data) {
+      state.banners = data;
     },
-    // 2.保存搜索的名称
-    MUSICNAME(state, data) {
-      state.searchText = data;
+    // 2.存储歌单列表
+    GEDAN_LIST(state, data) {
+      state.playlists = data;
     },
-    // 3.保存当前播放的音乐的url以及信息
+    // 3.存储歌单信息
+    GEDAN_INFO(state, data) {
+      state.gedanInfo = data;
+    },
+    // 4.存储歌曲列表信息
+    MUSICLISTINFO(state, data) {
+      state.musicListInfo = data;
+    },
+    // 5.存储当前播放歌曲信息
     MUSICINFO(state, data) {
       state.musicInfo = data;
     },
-    // 4.保存当前播放的音乐的img
-    MUSICDETAIL(state, data) {
-      state.musicImgUrl = data;
-    },
-    // 5.保存歌单基本信息
-    GEDANLIST(state, { total, playlists }) {
-      state.gedanCount = total;
-      state.gedanList = playlists;
-    },
-    // 6.当前歌单详细信息
-    GEDANLISTINFO(state, data) {
-      state.gedanlistInfo = data;
+    // 6.存储搜索歌曲的总量
+    MUSIC_TOTAL(state, data) {
+      state.total = data;
     },
   },
   getters: {
-    musicIndex(s) {
-      return s.musicInfo.index || undefined;
+    // 1.获取歌单列表
+    playlist(s) {
+      return s.playlists.playlists || undefined;
     },
-    musicUrl(s) {
-      return s.musicInfo.url || undefined;
-    },
-    musicName(s) {
-      return s.musicInfo.name || undefined;
-    },
-    musicAuthor(s) {
-      return s.musicInfo.author || undefined;
-    },
-    musicAddress(s) {
-      return s.musicInfo.address || undefined;
+    // 2.获取歌单总数
+    gedantotal(s) {
+      return s.playlists.total || undefined;
     },
   },
 };
