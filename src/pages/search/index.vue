@@ -25,9 +25,14 @@
       <ul class="musicList" @click="music">
         <li v-for="(music, index) in musicListInfo" :key="music.id">
           <i> {{ index }} </i
-          ><em :data-index="index" :data-id="music.id" :data-name="music.name">
+          ><em
+            :data-index="index"
+            :data-id="music.id"
+            :data-name="music.name"
+            :data-author="music.artists[0].name"
+          >
             {{ music.name }} </em
-          ><span> music.ar[0].name </span>
+          ><span> {{ music.artists[0].name }} </span>
         </li>
       </ul>
     </div>
@@ -46,6 +51,7 @@ export default {
     music(e) {
       if (e.target.nodeName == "EM") {
         let musicInfo = {
+          address: "search",
           index: e.target.dataset.index,
           id: e.target.dataset.id,
           name: e.target.dataset.name,

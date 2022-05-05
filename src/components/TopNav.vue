@@ -19,7 +19,9 @@
       <div class="user">
         <img src="@/assets/head.png" alt="" class="head" />
         <span class="userName">
-          <i>用户名 v</i>
+          <i @click="login"
+            ><span v-if="userInfo">{{ userInfo.name || "请登录v" }}</span></i
+          >
           <!-- 用户信息 -->
           <div class="info">
             <div class="top">
@@ -85,6 +87,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "TopNav",
   data() {
@@ -95,6 +98,12 @@ export default {
       },
     };
   },
+  mounted() {
+    if (localStorage.getItem("music_cookie")) {
+      let cookie = localStorage.getItem("music_cookie");
+      this.$store.dispatch("userStore/userInfo", cookie);
+    }
+  },
   methods: {
     tosearch() {
       if (this.info.name != "") {
@@ -102,6 +111,12 @@ export default {
         this.$store.dispatch("musicStore/musicName", this.info);
       }
     },
+    login() {
+      this.$router.push({ name: "login" });
+    },
+  },
+  computed: {
+    ...mapState("userStore", ["userInfo"]),
   },
 };
 </script>

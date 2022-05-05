@@ -1,5 +1,5 @@
 import axios from "axios";
-
+axios.defaults.withCredentials = true;
 const requests = axios.create({
   baseURL: "http://cloud-music.pl-fe.cn",
   timeout: 5000,

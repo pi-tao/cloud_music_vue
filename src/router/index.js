@@ -70,6 +70,16 @@ const router = new VueRouter({
       path: "/search",
       component: () => import("@/pages/search"),
     },
+    {
+      name: "login",
+      path: "/login",
+      component: () => import("@/pages/login"),
+    },
+    {
+      name: "musicDetail",
+      path: "/musicDetail",
+      component: () => import("@/pages/musicVideo/musicDetail"),
+    },
   ],
 });
 // 暴露router

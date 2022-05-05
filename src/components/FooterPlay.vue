@@ -65,18 +65,31 @@ export default {
       // console.log(this.musicInfo);
       if (this.musicInfo.index * 1 > 0) {
         if (this.musicListInfo) {
-          let index = this.musicInfo.index * 1 - 1;
-          let musicInfo = {
-            index: index,
-            id: this.musicListInfo[index].id,
-            name: this.musicListInfo[index].name,
-            img: this.musicListInfo[index].al.picUrl,
-            author:
-              this.musicListInfo[index].ar[0].name ||
-              this.musicListInfo[index].artists[0].name,
-          };
-          // console.log(musicInfo);
-          this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          if (this.musicInfo.address == "gedan") {
+            let index = this.musicInfo.index * 1 - 1;
+            let musicInfo = {
+              index: index,
+              id: this.musicListInfo[index].id,
+              name: this.musicListInfo[index].name,
+              img: this.musicListInfo[index].al.picUrl,
+              author:
+                this.musicListInfo[index].ar[0].name ||
+                this.musicListInfo[index].artists[0].name,
+            };
+            // console.log(musicInfo);
+            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          } else if (this.musicInfo.address == "search") {
+            let index = this.musicInfo.index * 1 - 1;
+            let musicInfo = {
+              address: "search",
+              index: index,
+              id: this.musicListInfo[index].id,
+              name: this.musicListInfo[index].name,
+              author: this.musicListInfo[index].artists[0].name,
+            };
+            // console.log(musicInfo);
+            this.$store.dispatch("musicStore/musicDetail", musicInfo);
+          }
         }
       }
     },
@@ -85,18 +98,31 @@ export default {
       // console.log(this.musicInfo);
       if (this.musicInfo.index * 1 >= 0) {
         if (this.musicListInfo) {
-          let index = this.musicInfo.index * 1 + 1;
-          let musicInfo = {
-            index: index,
-            id: this.musicListInfo[index].id,
-            name: this.musicListInfo[index].name,
-            img: this.musicListInfo[index].al.picUrl,
-            author:
-              this.musicListInfo[index].ar[0].name ||
-              this.musicListInfo[index].artists[0].name,
-          };
-          // console.log(musicInfo);
-          this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          if (this.musicInfo.address == "gedan") {
+            let index = this.musicInfo.index * 1 + 1;
+            let musicInfo = {
+              index: index,
+              id: this.musicListInfo[index].id,
+              name: this.musicListInfo[index].name,
+              img: this.musicListInfo[index].al.picUrl,
+              author:
+                this.musicListInfo[index].ar[0].name ||
+                this.musicListInfo[index].artists[0].name,
+            };
+            // console.log(musicInfo);
+            this.$store.dispatch("musicStore/musicInfo", musicInfo);
+          } else if (this.musicInfo.address == "search") {
+            let index = this.musicInfo.index * 1 + 1;
+            let musicInfo = {
+              address: "search",
+              index: index,
+              id: this.musicListInfo[index].id,
+              name: this.musicListInfo[index].name,
+              author: this.musicListInfo[index].artists[0].name,
+            };
+            // console.log(musicInfo);
+            this.$store.dispatch("musicStore/musicDetail", musicInfo);
+          }
         }
       }
     },

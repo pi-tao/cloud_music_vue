@@ -59,6 +59,7 @@ export default {
     music(e) {
       if (e.target.nodeName == "EM") {
         let musicInfo = {
+          address: "gedan",
           index: e.target.dataset.index,
           id: e.target.dataset.id,
           name: e.target.dataset.name,

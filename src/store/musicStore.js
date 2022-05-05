@@ -4,6 +4,9 @@ import { reqGetGedanInfo } from "@/api";
 import { reqMusicDetail } from "@/api";
 import { reqGetMusicURL } from "@/api";
 import { reqGetMusicId } from "@/api";
+import { reqAllVideo } from "@/api";
+import { reqVideoUrl } from "@/api";
+import { reqVideoDetail } from "@/api";
 export default {
   namespaced: true,
   state: {
@@ -13,6 +16,10 @@ export default {
     musicListInfo: [] || undefined, //4.音乐列表信息
     musicInfo: {} || undefined, //5.当前播放歌曲的信息
     total: null, //6.搜索歌曲的总数
+
+    videoList: [], //视频列表
+    videoUrl: undefined, //当前播放的视频的url
+    videoDetail: {},
   },
   actions: {
     // 1.获取banner图片
@@ -102,10 +109,40 @@ export default {
         // console.log(result.songs);
         let info = {
           ...data,
-          author: result.songs[0].ar[0].name,
           img: result.songs[0].al.picUrl,
         };
         context.dispatch("musicInfo", info);
+      }
+    },
+    // 8.获取video信息
+    async videoList({ commit }, data) {
+      let times = data || 1;
+      let arr = [];
+      let i = 0;
+      for (; i < 3 * times; i++) {
+        let result = await reqAllVideo(i * 1);
+        if (result.code == 200) {
+          // console.log(result);
+          arr.push(...result.datas);
+        }
+      }
+      // console.log(arr);
+      commit("VIDOELIST", arr);
+    },
+    // 9.获取videoUrl
+    async videoUrl({ commit }, data) {
+      let result = await reqVideoUrl(data);
+      if (result.code == 200) {
+        console.log(result);
+        commit("VIDEOURL", result.urls[0].url);
+      }
+    },
+    // 10获取当前视频详细信息
+    async videoDetail({ commit }, data) {
+      let result = await reqVideoDetail(data);
+      if (result.code == 200) {
+        console.log(result);
+        commit("VIDEODETAIL", result.data);
       }
     },
   },
@@ -134,6 +171,16 @@ export default {
     MUSIC_TOTAL(state, data) {
       state.total = data;
     },
+    // 7.存储视频列表
+    VIDOELIST(state, data) {
+      state.videoList = data;
+    },
+    VIDEOURL(state, data) {
+      state.videoUrl = data;
+    },
+    VIDEODETAIL(state, data) {
+      state.videoDetail = data;
+    },
   },
   getters: {
     // 1.获取歌单列表
@@ -143,6 +190,30 @@ export default {
     // 2.获取歌单总数
     gedantotal(s) {
       return s.playlists.total || undefined;
+    },
+    // 3.获取video作者头像
+    videoAva(s) {
+      return s.videoDetail.avatarUrl || undefined;
+    },
+    // 4.获取video封面url
+    videoCover(s) {
+      return s.videoDetail.coverUrl || undefined;
+    },
+    // 5.获取video作者名称
+    videoAvaName(s) {
+      return s.videoDetail.creator.nickname || undefined;
+    },
+    // 6.获取video作者id
+    videoUserId(s) {
+      return s.videoDetail.creator.userId || undefined;
+    },
+    // 6.获取video描述
+    videoDescription(s) {
+      return s.videoDetail.description || undefined;
+    },
+    // 6.获取video标题
+    videoTitle(s) {
+      return s.videoDetail.title || undefined;
     },
   },
 };

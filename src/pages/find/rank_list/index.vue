@@ -1,5 +1,10 @@
 <template>
-  <div>排行榜</div>
+  <div>
+    <h3>官方榜</h3>
+    <ul>
+      <li></li>
+    </ul>
+  </div>
 </template>
 
 <script>

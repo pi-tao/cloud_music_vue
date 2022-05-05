@@ -5,8 +5,8 @@
       <div class="swiper-wrapper">
         <div
           class="swiper-slide"
-          v-for="banner in banners"
-          :key="banner.encodeId"
+          v-for="(banner, index) in banners"
+          :key="index"
         >
           <a><img :src="banner.imageUrl" /></a>
         </div>
