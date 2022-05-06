@@ -17,24 +17,31 @@
           <li tabindex="1">我的收藏</li>
         </ul>
         <h3>我的歌单</h3>
-        <ul>
-          <li tabindex="1">我的喜欢</li>
-          <li tabindex="1">歌单</li>
-          <li tabindex="1">歌单</li>
-          <li tabindex="1">歌单</li>
-          <li tabindex="1">歌单</li>
+        <ul @click="toMyPlay">
+          <li
+            tabindex="1"
+            v-for="play in userPlayList"
+            :key="play.id"
+            :data-gedanid="play.id"
+          >
+            {{ play.name }}
+          </li>
         </ul>
       </nav>
       <main class="main">
-        <router-view></router-view>
+        <keep-alive :include="['list_info']">
+          <router-view></router-view>
+        </keep-alive>
       </main>
     </div>
   </main>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "MiddleMain",
+
   methods: {
     toFind() {
       this.$router.push({ name: "find" });
@@ -45,6 +52,17 @@ export default {
     toFM() {
       this.$router.push({ name: "FM" });
     },
+    toMyPlay(e) {
+      if (e.target.dataset) {
+        let id = e.target.dataset.gedanid;
+        // console.log(id);
+        this.$router.push({ name: "list_info" });
+        this.$store.dispatch("musicStore/getGedanInfo", id);
+      }
+    },
+  },
+  computed: {
+    ...mapState("userStore", ["userPlayList"]),
   },
 };
 </script>

@@ -17,7 +17,7 @@
         <button @click="tosearch">搜</button>
       </div>
       <div class="user">
-        <img src="@/assets/head.png" alt="" class="head" />
+        <img :src="userInfo.avatarUrl" alt="" class="head" />
         <span class="userName">
           <i @click="login"
             ><span v-if="userInfo">{{ userInfo.name || "请登录v" }}</span></i

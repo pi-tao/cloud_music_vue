@@ -68,6 +68,7 @@ export default {
           if (this.musicInfo.address == "gedan") {
             let index = this.musicInfo.index * 1 - 1;
             let musicInfo = {
+              address: "gedan",
               index: index,
               id: this.musicListInfo[index].id,
               name: this.musicListInfo[index].name,
@@ -101,6 +102,7 @@ export default {
           if (this.musicInfo.address == "gedan") {
             let index = this.musicInfo.index * 1 + 1;
             let musicInfo = {
+              address: "gedan",
               index: index,
               id: this.musicListInfo[index].id,
               name: this.musicListInfo[index].name,

@@ -1,5 +1,6 @@
 import { reqLogin } from "@/api";
 import { reqUserAccount } from "@/api";
+import { reqUserPlayList } from "@/api";
 export default {
   namespaced: true,
   state: {
@@ -12,8 +13,10 @@ export default {
       avatarUrl: undefined,
       backgroundUrl: undefined,
     },
+    userPlayList: [],
   },
   actions: {
+    // 1.登录
     async login({ commit }, data) {
       if (!localStorage.getItem("music_cookie")) {
         let result = await reqLogin(data);
@@ -26,11 +29,21 @@ export default {
       }
       // console.log(await reqAllVideo());
     },
-    async userInfo({ commit }, data) {
+    // 2.获取用户信息
+    async userInfo({ commit, dispatch }, data) {
       let result = await reqUserAccount(data);
       if (result.code == 200) {
         // console.log(result);
         commit("USERINFO", result);
+        dispatch("userPlay", result.profile.userId);
+      }
+    },
+    //3. 获取用户歌单
+    async userPlay({ commit }, data) {
+      let result = await reqUserPlayList(data);
+      if (result.code == 200) {
+        // console.log(result);
+        commit("USERPLAY", result.playlist);
       }
     },
   },
@@ -51,6 +64,10 @@ export default {
       userInfo.userId = data.profile.userId;
       userInfo.avatarUrl = data.profile.avatarUrl;
       userInfo.backgroundUrl = data.profile.backgroundUrl;
+    },
+    // .存储用户歌单
+    USERPLAY(state, data) {
+      state.userPlayList = data;
     },
   },
   getters: {},

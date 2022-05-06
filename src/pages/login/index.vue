@@ -24,7 +24,7 @@
         <label for="auto">自动登录</label>
       </div>
       <button class="log" @click="login">登 录</button><br />
-      <button class="reg">注册</button>
+      <!-- <button class="reg" @click="toCode">验证码登录</button> -->
       <div class="app">
         <ul>
           <li>微信</li>
@@ -60,6 +60,7 @@ export default {
     },
     unlogin() {
       localStorage.removeItem("music_cookie");
+      this.$router.push({ name: "find" });
       location.reload();
     },
   },
@@ -151,7 +152,7 @@ export default {
     }
     .reg {
       margin-top: 10px;
-      margin-left: 170px;
+      margin-left: 150px;
       border: 0;
       color: #ea4848;
       background-color: white;

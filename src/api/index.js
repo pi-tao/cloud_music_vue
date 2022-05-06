@@ -128,7 +128,7 @@ export const reqUserUpdate = ({
 //   });
 // };
 // 15.获取用户歌单
-export const resGetUserPlayList = (params) =>
+export const reqUserPlayList = (params) =>
   requests({
     url: "/user/playlist",
     params: {
@@ -219,6 +219,7 @@ export const reqGetGedanInfo = (params) =>
     url: "/playlist/detail",
     params: {
       id: params,
+      cookie: localStorage.getItem("music_cookie"),
     },
   });
 

@@ -7,6 +7,7 @@ import { reqGetMusicId } from "@/api";
 import { reqAllVideo } from "@/api";
 import { reqVideoUrl } from "@/api";
 import { reqVideoDetail } from "@/api";
+
 export default {
   namespaced: true,
   state: {
@@ -17,9 +18,9 @@ export default {
     musicInfo: {} || undefined, //5.当前播放歌曲的信息
     total: null, //6.搜索歌曲的总数
 
-    videoList: [], //视频列表
+    videoList: undefined, //视频列表
     videoUrl: undefined, //当前播放的视频的url
-    videoDetail: {},
+    videoDetail: {}, //视频详情
   },
   actions: {
     // 1.获取banner图片
@@ -133,7 +134,7 @@ export default {
     async videoUrl({ commit }, data) {
       let result = await reqVideoUrl(data);
       if (result.code == 200) {
-        console.log(result);
+        // console.log(result);
         commit("VIDEOURL", result.urls[0].url);
       }
     },
@@ -141,7 +142,7 @@ export default {
     async videoDetail({ commit }, data) {
       let result = await reqVideoDetail(data);
       if (result.code == 200) {
-        console.log(result);
+        // console.log(result);
         commit("VIDEODETAIL", result.data);
       }
     },
@@ -175,9 +176,11 @@ export default {
     VIDOELIST(state, data) {
       state.videoList = data;
     },
+    // 8.存储视频url
     VIDEOURL(state, data) {
       state.videoUrl = data;
     },
+    // 9.存储视频详情
     VIDEODETAIL(state, data) {
       state.videoDetail = data;
     },
@@ -191,29 +194,41 @@ export default {
     gedantotal(s) {
       return s.playlists.total || undefined;
     },
-    // 3.获取video作者头像
+    // 3.获取当前video作者头像
     videoAva(s) {
       return s.videoDetail.avatarUrl || undefined;
     },
-    // 4.获取video封面url
+    // 4.获取当前video封面url
     videoCover(s) {
       return s.videoDetail.coverUrl || undefined;
     },
-    // 5.获取video作者名称
+    // 5.获取当前video作者名称
     videoAvaName(s) {
       return s.videoDetail.creator.nickname || undefined;
     },
-    // 6.获取video作者id
+    // 6.获取当前video作者id
     videoUserId(s) {
       return s.videoDetail.creator.userId || undefined;
     },
-    // 6.获取video描述
+    // 6.获取当前video描述
     videoDescription(s) {
       return s.videoDetail.description || undefined;
     },
-    // 6.获取video标题
+    // 6.获取当前video标题
     videoTitle(s) {
       return s.videoDetail.title || undefined;
+    },
+    // 7.获取当前video的id
+    videoId(s) {
+      return s.videoDetail.vid || undefined;
+    },
+    // 8.获取当前video评论熟练
+    videoCommentCount(s) {
+      return s.videoDetail.commentCount || undefined;
+    },
+    // 9.获取当前video播放量
+    videoPlayTime(s) {
+      return s.videoDetail.playTime || undefined;
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="video" v-if="!videoList">
+    <div class="video" v-if="userInfo.isLogin">
       <ul @click="toVideo">
         <li
           v-for="video in videoList"
@@ -13,16 +13,9 @@
           </div>
         </li>
       </ul>
-      <el-pagination
-        class="page"
-        :page-size="60"
-        :pager-count="11"
-        layout="prev, pager, next"
-        :total="500"
-      >
-      </el-pagination>
+      <div class="next"><button @click="next">下一页</button></div>
     </div>
-    <div v-if="videoList">登录后才能加载出视频</div>
+    <div v-if="!userInfo.isLogin">登录后才能加载出视频</div>
   </div>
 </template>
 
@@ -30,11 +23,17 @@
 import { mapState } from "vuex";
 export default {
   name: "musicVideo",
+  data() {
+    return {
+      times: 1,
+    };
+  },
   mounted() {
-    this.$store.dispatch("musicStore/videoList");
+    this.$store.dispatch("musicStore/videoList", this.times);
   },
   computed: {
     ...mapState("musicStore", ["videoList"]),
+    ...mapState("userStore", ["userInfo"]),
   },
   methods: {
     toVideo(e) {
@@ -45,6 +44,10 @@ export default {
         this.$store.dispatch("musicStore/videoDetail", vid);
         this.$router.push("musicDetail");
       }
+    },
+    next() {
+      this.$store.dispatch("musicStore/videoList", this.times + 1);
+      this.times = this.times + 1;
     },
   },
 };
@@ -86,6 +89,22 @@ export default {
           font-size: 12px;
           line-height: 20px;
         }
+      }
+    }
+  }
+  .next {
+    width: 100%;
+    margin: 20px;
+    text-align: center;
+    button {
+      border: 1px solid @grey;
+      background-color: white;
+      width: 80px;
+      height: 40px;
+      cursor: pointer;
+      border-radius: 5px;
+      &:hover {
+        background-color: @border_c;
       }
     }
   }
